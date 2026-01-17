@@ -1,9 +1,16 @@
 import type {RouteInitializer} from "../registry/registry.js";
 import type {Context, Hono} from "hono";
 
-export class FilesController implements RouteInitializer {
+export interface IFilesService {
+    uploadFile(): void
+    getFile(): void
+}
 
-    constructor() {
+export class FilesController implements RouteInitializer {
+    private filesService: IFilesService
+
+    constructor(filesScv: IFilesService) {
+        this.filesService= filesScv
     }
 
     public initRoutes(router: Hono) {
@@ -12,10 +19,14 @@ export class FilesController implements RouteInitializer {
     }
 
     private uploadFile = async (c: Context) => {
+        this.filesService.uploadFile()
+
         return c.text("Internal Server Error", 500)
     }
 
     private getFile = async (c: Context) => {
+        this.filesService.getFile()
+
         return c.text("Internal Server Error", 500)
     }
 }

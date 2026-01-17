@@ -1,9 +1,16 @@
 import type {RouteInitializer} from "../registry/registry.js";
 import type {Context, Hono} from "hono";
 
-export class QuotesController implements RouteInitializer {
+export interface IQuotesService{
+    createQuote(): void
+    getQuote(): void
+}
 
-    constructor() {
+export class QuotesController implements RouteInitializer {
+    private quotesService: IQuotesService
+
+    constructor(quotesScv: IQuotesService) {
+        this.quotesService = quotesScv
     }
 
     public initRoutes(router: Hono) {
@@ -12,10 +19,14 @@ export class QuotesController implements RouteInitializer {
     }
 
     private createQuote = async (c: Context) => {
+        this.quotesService.createQuote()
+
         return c.text("Internal Server Error", 500)
     }
 
     private getQuote = async (c: Context) => {
+        this.quotesService.getQuote()
+
         return c.text("Internal Server Error", 500)
     }
 }

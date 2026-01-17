@@ -1,9 +1,15 @@
 import type {RouteInitializer} from "../registry/registry.js";
 import type {Context, Hono} from "hono";
 
-export class MaterialController implements RouteInitializer{
+export interface IMaterialService{
+    listMaterial(): void
+}
 
-    constructor() {
+export class MaterialController implements RouteInitializer{
+    private materialService: IMaterialService
+
+    constructor(materialScv: IMaterialService) {
+        this.materialService = materialScv
     }
 
     public initRoutes(router: Hono) {
@@ -11,6 +17,8 @@ export class MaterialController implements RouteInitializer{
     }
 
     private listMaterial = async (c: Context) => {
+        this.materialService.listMaterial()
+
         return c.text("Internal Server Error", 500)
     }
 }
