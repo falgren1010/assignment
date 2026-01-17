@@ -69,12 +69,19 @@ export interface Order {
     createdAt: Date;
 }
 
-export interface Material{
+export interface Material {
     name: string,
     code: string
     price: number // euro/cm^3
     leadTime: number // days
     properties: string[]
+}
+
+export interface MaterialPrice {
+    materialCode: string,
+    materialPrice: number
+    validFrom: Date,
+    validTo: Date | null
 }
 
 export interface StripePaymentIntent {
