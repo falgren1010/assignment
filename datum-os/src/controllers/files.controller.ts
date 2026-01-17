@@ -4,7 +4,7 @@ import type {Result} from "../services/models/common.models.js";
 import type {File as FileDetails} from "../services/models/models.js"
 
 export interface IFilesService {
-    uploadFile(file: File): Promise<Result<void>>
+    uploadFile(file: File): Promise<Result<FileDetails>>
     getFileDetails(id: string): Promise<Result<FileDetails>>
 }
 
@@ -30,7 +30,7 @@ export class FilesController implements RouteInitializer {
                 return c.text("Bad Request: " + result.message, 400)
             }
 
-            return c.text("OK", 200)
+            return c.json(result.data, 200)
 
         } catch (err) {
             const msg = err instanceof Error ? err.message : "Unknown error"

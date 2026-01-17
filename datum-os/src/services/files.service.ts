@@ -21,7 +21,7 @@ export class FilesService implements IFilesService{
         this.geometryServiceAdapter = geoServiceAdapter
     }
 
-    async uploadFile(file: File): Promise<Result<void>> {
+    async uploadFile(file: File): Promise<Result<FileDetails>> {
         const validation = this.validateFile(file)
         if(!validation.success){
             return { success: false, message: "Error File Validation:" + validation.message }
@@ -56,7 +56,7 @@ export class FilesService implements IFilesService{
             return { success: false, message: "Error uploading File to DB: " + detailsResult.message }
         }
 
-        return { success: true, data: null }
+        return { success: true, data: detailsResult.data }
     }
 
     async getFileDetails(id: string): Promise<Result<FileDetails>> {
