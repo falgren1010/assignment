@@ -1,26 +1,29 @@
 import { serve } from '@hono/node-server'
-import { Hono } from 'hono'
-
 import 'dotenv/config';
-// import { drizzle } from 'drizzle-orm/node-postgres';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import {Registry} from "./registry/registry.js";
 
-const app = new Hono()
+// Create and init DB connection
+const database = drizzle(process.env.DATABASE_URL!);
 
-// const db = drizzle(process.env.DATABASE_URL!);
+// Create Registry and init API Routes
+const registry = new Registry(database)
+registry.initRoutes()
 
-app.get('/', (c) => {
-  return c.text('Hello Hono!')
-})
-
+// Load Port from .env
 const port = Number(process.env.PORT) || 3001
 
+// Get Router from Registry and start Server
+const router = registry.getRouter()
+
 const server = serve({
-  fetch: app.fetch,
+  fetch: router.fetch,
   port: port
 }, (info) => {
   console.log(`Server is running on http://localhost:${info.port}`)
 })
 
+// Graceful Shutdown handling
 process.on('SIGINT', () => {
   console.log("Received SIGINT. Shutdown...")
   server.close()
