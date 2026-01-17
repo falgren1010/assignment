@@ -1,18 +1,31 @@
+import type {IOrdersService} from "../controllers/orders.controller.js";
 
-export class OrdersService{
+export interface IOrdersAdapter{
+    createOrder(): void
+    getOrder(): void
+    processPayment(): void
+}
 
-    constructor() {
+export class OrdersService implements IOrdersService{
+    private ordersAdapter: IOrdersAdapter
+
+    constructor(ordersAdp: IOrdersAdapter) {
+        this.ordersAdapter = ordersAdp
     }
 
-    createOrder():void {
+     createOrder(): void {
         // todo implement
+        this.ordersAdapter.createOrder()
     }
 
-    getOrder(): void {
+     getOrder(): void {
         // todo implement
+         this.ordersAdapter.getOrder()
+
     }
 
-    processPayment(): void {
+     processPayment(): void {
         // todo implement
+         this.ordersAdapter.processPayment()
     }
 }

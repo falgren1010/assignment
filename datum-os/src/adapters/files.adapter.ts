@@ -1,7 +1,17 @@
+import type {NodePgDatabase} from "drizzle-orm/node-postgres";
+import type {IFilesAdapter} from "../services/files.service.js";
 
-export class FilesAdapter {
+export interface IFilesDatabase {
+    find(): void
+    save(): void
+}
 
-    constructor() {
+export class FilesAdapter implements IFilesAdapter {
+
+    private filesDB: NodePgDatabase
+
+    constructor(db: NodePgDatabase) {
+        this.filesDB = db
     }
 
     uploadFile(): void {

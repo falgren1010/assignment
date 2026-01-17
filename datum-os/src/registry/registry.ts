@@ -1,4 +1,3 @@
-import {Hono} from "hono";
 import { NodePgDatabase} from "drizzle-orm/node-postgres";
 import  {FilesController} from "../controllers/files.controller.js";
 import  {MaterialController} from "../controllers/material.controller.js";
@@ -8,13 +7,17 @@ import  {FilesService} from "../services/files.service.js";
 import  {MaterialService} from "../services/material.service.js";
 import  {OrdersService} from "../services/orders.service.js";
 import  {QuotesService} from "../services/quotes.service.js";
+import  {FilesAdapter} from "../adapters/files.adapter.js";
 import  {MaterialAdapter} from "../adapters/material.adapter.js";
+import  {OrdersAdapter} from "../adapters/orders.adapter.js";
+import  {QuotesAdapter} from "../adapters/quotes.adapter.js";
+import {Hono} from "hono";
 
 export interface RouteInitializer{
     initRoutes(router: Hono): void
 }
 
-export class Registry{
+export class Registry {
     private database: NodePgDatabase
 
     private router : Hono
@@ -29,19 +32,26 @@ export class Registry{
     private ordersService: OrdersService
     private quotesService: QuotesService
 
+    private filesAdapter: FilesAdapter
     private materialAdapter: MaterialAdapter
+    private ordersAdapter: OrdersAdapter
+    private quotesAdapter: QuotesAdapter
 
-    constructor(db: NodePgDatabase){
+
+    constructor(db: NodePgDatabase) {
         this.database = db
 
         this.router = new Hono()
 
-        this.materialAdapter = new MaterialAdapter()
+        this.filesAdapter = new FilesAdapter(this.database)
+        this.materialAdapter = new MaterialAdapter(this.database)
+        this.ordersAdapter = new OrdersAdapter(this.database)
+        this.quotesAdapter = new QuotesAdapter(this.database)
 
-        this.filesService = new FilesService()
+        this.filesService = new FilesService(this.filesAdapter)
         this.materialService = new MaterialService(this.materialAdapter)
-        this.ordersService = new OrdersService()
-        this.quotesService = new QuotesService()
+        this.ordersService = new OrdersService(this.ordersAdapter)
+        this.quotesService = new QuotesService(this.quotesAdapter)
 
         this.filesController = new FilesController(this.filesService)
         this.materialController = new MaterialController(this.materialService)
