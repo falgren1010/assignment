@@ -3,6 +3,9 @@ import type {IGeometryService} from "../adapters/geometry-service.adapter.js"
 
 
 export class MockGeometryService implements IGeometryService {
+
+    constructor() {}
+
     async extractProperties(fileBuffer: Buffer): Promise<GeometryResult> {
 
         console.log("Calculating geometry data...")
