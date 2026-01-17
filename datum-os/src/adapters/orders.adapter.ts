@@ -1,7 +1,16 @@
+import type {NodePgDatabase} from "drizzle-orm/node-postgres";
+
+export interface IOrdersDatabase{
+    find(): void
+    save(): void
+    savePayment(): void
+}
 
 export class OrdersAdapter{
+    private ordersDB : NodePgDatabase
 
-    constructor() {
+    constructor(db: NodePgDatabase) {
+        this.ordersDB = db
     }
 
     createOrder(): void{
@@ -10,7 +19,7 @@ export class OrdersAdapter{
     getOrder(): void{
         throw new Error("not implemented")
     }
-    processPayment():void{
+    processPayment(): void{
         throw new Error("not implemented")
     }
 }

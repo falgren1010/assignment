@@ -1,11 +1,12 @@
 import type {Result} from "./models/common.models.js";
 import type {Material} from "./models/models.js";
+import type {IMaterialService} from "../controllers/material.controller.js";
 
 export interface IMaterialAdapter{
     listMaterial(): Promise<Result<Material[]>>
 }
 
-export class MaterialService{
+export class MaterialService implements IMaterialService{
     private materialAdapter: IMaterialAdapter
 
     constructor(materialAdp: IMaterialAdapter) {

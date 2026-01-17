@@ -1,14 +1,24 @@
+import type {IQuotesService} from "../controllers/quotes.controller.js";
 
-export class QuotesService{
+export interface IQuotesAdapter{
+    createQuote(): void
+    getQuote(): void
+}
 
-    constructor() {
+export class QuotesService implements IQuotesService{
+    private quotesAdapter: IQuotesAdapter
+
+    constructor(quotesAdp: IQuotesAdapter) {
+        this.quotesAdapter = quotesAdp
     }
 
-     createQuote(): void {
+     createQuote(): void  {
         // todo implement
+         this.quotesAdapter.createQuote()
     }
 
-     getQuote(): void {
+     getQuote():  void{
         // todo implement
+         this.quotesAdapter.getQuote()
     }
 }
