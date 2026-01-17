@@ -77,3 +77,13 @@ export interface Material{
     leadTime: number // days
     properties: string[]
 }
+
+export interface StripePaymentIntent {
+    id: string;
+    amount: number;
+    currency: string;
+    status: string;
+    client_secret?: string;
+    payment_method?: string | null;
+    metadata?: Record<string, string>;
+}

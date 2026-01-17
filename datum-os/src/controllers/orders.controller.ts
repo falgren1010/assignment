@@ -1,12 +1,12 @@
 import type {RouteInitializer} from "../registry/registry.js";
 import type {Context, Hono} from "hono";
-import type {Order} from "../services/models/models.js";
+import type {Order, StripePaymentIntent} from "../services/models/models.js";
 import type {Result} from "../services/models/common.models.js";
 
 export interface IOrdersService{
     createOrder(order: Order): Promise<Result<void>>
-    getOrder(): void
-    processPayment(): void
+    getOrder(id: string): Promise<Result<Order>>
+    processPayment(paymentIntent: StripePaymentIntent): Promise<Result<void>>
 }
 
 export class OrdersController implements RouteInitializer{
@@ -41,14 +41,38 @@ export class OrdersController implements RouteInitializer{
     }
 
     private getOrder = async (c: Context) => {
-        this.ordersService.getOrder()
+        try{
+            const id = c.req.param("id")
 
-        return c.text("Internal Server Error", 500)
+            const result = await this.ordersService.getOrder(id)
+            if (!result.success) {
+                return c.text("Bad Request: " + result.message, 400)
+            }
+
+            return c.json(result.data, 200)
+
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : "Unknown error"
+
+            return c.text("Internal Server Error: " + msg, 500)
+        }
     }
 
     private processPayment = async (c: Context) => {
-        this.ordersService.processPayment()
+        try {
+            const paymentIntent = await c.req.json<StripePaymentIntent>()
 
-        return c.text("Internal Server Error", 500)
+            const result = await this.ordersService.processPayment(paymentIntent)
+            if (!result.success) {
+                return c.text("Bad Request: " + result.message, 400)
+            }
+
+            return c.text("OK", 200)
+
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : "Unknown error"
+
+            return c.text("Internal Server Error: " + msg, 500)
+        }
     }
 }

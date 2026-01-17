@@ -1,6 +1,6 @@
 import type {NodePgDatabase} from "drizzle-orm/node-postgres";
 import type {IOrdersAdapter} from "../services/orders.service.js";
-import type {Order} from "../services/models/models.js";
+import type {Order, StripePaymentIntent} from "../services/models/models.js";
 import type {Result} from "../services/models/common.models.js";
 
 export interface IOrdersDatabase{
@@ -27,10 +27,37 @@ export class OrdersAdapter implements IOrdersAdapter{
         return Promise.resolve(result);
     }
 
-    getOrder(): void{
-        throw new Error("not implemented")
+    getOrder(id: string): Promise<Result<Order>>{
+        //rm later
+        console.log(id)
+        const result: Result<Order> = {
+            data: {
+                id: "",
+                quoteId: "",
+                customerName: "",
+                customerEmail: "",
+                customerCompany: null,
+                paymentMethod: "card",
+                paymentStatus: "pending",
+                purchaseOrderFileId: null,
+                totalAmount: 0,
+                currency: "EUR",
+                createdAt: new Date()
+            },
+            success: true
+        };
+
+        return Promise.resolve(result);
     }
-    processPayment(): void{
-        throw new Error("not implemented")
+
+    processPayment(paymentIntent: StripePaymentIntent): Promise<Result<void>>{
+        //rm later
+        console.log(paymentIntent)
+        const result: Result<void> = {
+            data: null,
+            success: true
+        };
+
+        return Promise.resolve(result);
     }
 }
