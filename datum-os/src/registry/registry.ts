@@ -8,6 +8,7 @@ import  {FilesService} from "../services/files.service.js";
 import  {MaterialService} from "../services/material.service.js";
 import  {OrdersService} from "../services/orders.service.js";
 import  {QuotesService} from "../services/quotes.service.js";
+import  {MaterialAdapter} from "../adapters/material.adapter.js";
 
 export interface RouteInitializer{
     initRoutes(router: Hono): void
@@ -28,13 +29,17 @@ export class Registry{
     private ordersService: OrdersService
     private quotesService: QuotesService
 
+    private materialAdapter: MaterialAdapter
+
     constructor(db: NodePgDatabase){
         this.database = db
 
         this.router = new Hono()
 
+        this.materialAdapter = new MaterialAdapter()
+
         this.filesService = new FilesService()
-        this.materialService = new MaterialService()
+        this.materialService = new MaterialService(this.materialAdapter)
         this.ordersService = new OrdersService()
         this.quotesService = new QuotesService()
 

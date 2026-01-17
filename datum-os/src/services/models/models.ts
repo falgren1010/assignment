@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-interface File {
+export interface File {
     id: string;
     originalName: string;
     storagePath: string;
@@ -9,14 +9,14 @@ interface File {
     uploadedAt: Date;
 }
 
-interface GeometryResult {
+export interface GeometryResult {
     success: boolean;
     properties?: GeometryProperties;
     error?: string;
     processingTimeMs: number;
 }
 
-interface GeometryProperties {
+export interface GeometryProperties {
     boundingBox: {
         x: number; // mm
         y: number; // mm
@@ -27,7 +27,7 @@ interface GeometryProperties {
     surfaceArea: number; // mm²
 }
 
-interface Quote {
+export interface Quote {
     id: string;
     fileId: string;
 
@@ -49,7 +49,7 @@ interface Quote {
     expiresAt: Date;
 }
 
-interface Order {
+export interface Order {
     id: string;
     quoteId: string;
 
@@ -70,7 +70,7 @@ interface Order {
     createdAt: Date;
 }
 
-interface Material{
+export interface Material{
     name: string,
     code: string
     price: number // euro/cm^3
