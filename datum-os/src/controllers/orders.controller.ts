@@ -1,8 +1,10 @@
 import type {RouteInitializer} from "../registry/registry.js";
 import type {Context, Hono} from "hono";
+import type {Order} from "../services/models/models.js";
+import type {Result} from "../services/models/common.models.js";
 
 export interface IOrdersService{
-    createOrder(): void
+    createOrder(order: Order): Promise<Result<void>>
     getOrder(): void
     processPayment(): void
 }
@@ -21,9 +23,21 @@ export class OrdersController implements RouteInitializer{
     }
 
     private createOrder = async (c: Context) => {
-        this.ordersService.createOrder()
+        try {
+            const order = await c.req.json<Order>()
 
-        return c.text("Internal Server Error", 500)
+            const result = await this.ordersService.createOrder(order)
+            if (!result.success) {
+                return c.text("Bad Request: " + result.message, 400)
+            }
+
+            return c.text("OK", 200)
+
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : "Unknown error"
+
+            return c.text("Internal Server Error: " + msg, 500)
+        }
     }
 
     private getOrder = async (c: Context) => {
