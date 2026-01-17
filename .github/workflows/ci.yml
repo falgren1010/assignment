@@ -1,0 +1,57 @@
+name: saeki-assignment CI
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+jobs:
+  portal:
+    name: Build datum-portal
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 24
+      - name: Install dependencies
+        run: |
+          cd datum-portal
+          npm install
+      - name: Lint
+        run: |
+          cd datum-portal
+          npm run lint
+# todo(lukas) add back later -> tests in FE
+#      - name: Test
+#        run: |
+#          cd datum-portal
+#          npm test
+      - name: Build
+        run: |
+          cd datum-portal
+          npm run build
+  os:
+    name: Build datum-os
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 24
+      - name: Install dependencies
+        run: |
+          cd datum-os
+          npm install
+      - name: Lint
+        run: |
+          cd datum-os
+          npm run lint
+      - name: Test
+        run: |
+          cd datum-os
+          npm test
+      - name: Build
+        run: |
+          cd datum-os
+          npm run build
