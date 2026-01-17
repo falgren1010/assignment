@@ -16,11 +16,30 @@ export class FilesAdapter implements IFilesAdapter {
         this.filesDB = db
     }
 
-    uploadFile(file: File): Promise<Result<void>>{
+    uploadFileToDatabase(file: File): Promise<Result<string>>{
         //rm later
         console.log(file)
-        const result: Result<void> = {
-            data: null,
+        const result: Result<string> = {
+            data: "id123",
+            success: true
+        };
+
+        return Promise.resolve(result);
+    }
+
+    createFileDetails(fileDetails: FileDetails): Promise<Result<FileDetails>>{
+        //rm later
+        console.log(fileDetails)
+        const result: Result<FileDetails> = {
+            data: {
+                id: "",
+                originalName: "",
+                storagePath: "",
+                sizeBytes: 0,
+                mimeType: "",
+                geometry: null,
+                uploadedAt: new Date()
+            },
             success: true
         };
 
