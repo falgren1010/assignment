@@ -1,9 +1,11 @@
 import type {RouteInitializer} from "../registry/registry.js";
 import type {Context, Hono} from "hono";
+import type {Quote} from "../services/models/models.js";
+import type {Result} from "../services/models/common.models.js";
 
 export interface IQuotesService{
-    createQuote(): void
-    getQuote(): void
+    createQuote(quote: Quote): Promise<Result<void>>
+    getQuote(id: string): Promise<Result<Quote>>
 }
 
 export class QuotesController implements RouteInitializer {
@@ -19,14 +21,38 @@ export class QuotesController implements RouteInitializer {
     }
 
     private createQuote = async (c: Context) => {
-        this.quotesService.createQuote()
+        try {
+            const quote = await c.req.json<Quote>()
 
-        return c.text("Internal Server Error", 500)
+            const result = await this.quotesService.createQuote(quote)
+            if (!result.success) {
+                return c.text("Bad Request: " + result.message, 400)
+            }
+
+            return c.text("OK", 200)
+
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : "Unknown error"
+
+            return c.text("Internal Server Error: " + msg, 500)
+        }
     }
 
     private getQuote = async (c: Context) => {
-        this.quotesService.getQuote()
+        try{
+            const id = c.req.param("id")
 
-        return c.text("Internal Server Error", 500)
+            const result = await this.quotesService.getQuote(id)
+            if (!result.success) {
+                return c.text("Bad Request: " + result.message, 400)
+            }
+
+            return c.json(result.data, 200)
+
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : "Unknown error"
+
+            return c.text("Internal Server Error: " + msg, 500)
+        }
     }
 }
