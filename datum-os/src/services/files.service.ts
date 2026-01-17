@@ -22,7 +22,10 @@ export class FilesService implements IFilesService{
     }
 
     async uploadFile(file: File): Promise<Result<void>> {
-        // todo validation func
+        const validation = this.validateFile(file)
+        if(!validation.success){
+            return { success: false, message: "Error File Validation:" + validation.message }
+        }
 
         // extract buffer from file
         const arrayBuffer = await file.arrayBuffer();
@@ -70,6 +73,20 @@ export class FilesService implements IFilesService{
 
     // Helper Functions ---------------------------------------------------------------------------
 
+    private validateFile(file: File): Result<boolean> {
+        if(!file) {
+            return { success: false, message: "No File" }
+        }
+        if( !(file.name.endsWith(".step") || file.name.endsWith(".stp")) ) {
+            return { success: false, message: "Invalid File Type" }
+        }
+        if (file.size > 50_000_000){
+            return { success: false, message: "File to big (max. 50MB)" }
+        }
+
+        return { success: true, data: null }
+    }
+
     private extractFileDetails(dbFileID: string, file: File, geoData: GeometryProperties): FileDetails{
         return {
             id: file.name, //overwritten by postgres later
@@ -80,6 +97,5 @@ export class FilesService implements IFilesService{
             geometry: geoData,
             uploadedAt: new Date()
         }
-
     }
 }
