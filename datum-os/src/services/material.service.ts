@@ -1,9 +1,10 @@
 import type {Result} from "./models/common.models.js";
-import type {Material} from "./models/models.js";
+import type {Material, MaterialPrice} from "./models/models.js";
 import type {IMaterialService} from "../controllers/material.controller.js";
 
 export interface IMaterialAdapter{
     listMaterial(): Promise<Result<Material[]>>
+    getMaterialPrice():  Promise<Result<MaterialPrice>>
 }
 
 export class MaterialService implements IMaterialService{
@@ -14,13 +15,31 @@ export class MaterialService implements IMaterialService{
     }
 
     async listMaterial(): Promise<Result<Material[]>> {
-        // todo id validation
-        const result = await this.materialAdapter.listMaterial()
-        if (!result.success){
-            return { success: false, message: "Not Found: " + result.message }
+        const result = await this.materialAdapter.listMaterial();
+        if (!result.success) {
+            return { success: false, message: "Not Found: " + result.message };
         }
 
-        return { success: true, data: result.data }
+        // check if data is truly present since result.data could be null
+        if(!result.data){
+            return { success: false, message: "Error retrieving Materials" };
+        }
+
+        for (const material of result.data) {
+            const priceResult = await this.materialAdapter.getMaterialPrice();
+            if (!priceResult.success) {
+                return {success: false, message: "Error retrieving Material prices"};
+            }
+
+            if (!priceResult.data) {
+                return {success: false, message: "Error retrieving Material prices"};
+            }
+
+            material.price = priceResult.data.materialPrice;
+        }
+
+        return {success: true, data: result.data}
+
     }
 
 }
