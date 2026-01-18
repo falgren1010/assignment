@@ -1,10 +1,10 @@
 import type {IMaterialAdapter} from "../services/material.service.js";
-import type { Result } from "../services/models/common.models.js";
 import type {Material, MaterialPrice} from "../services/models/models.js";
 import type {NodePgDatabase} from "drizzle-orm/node-postgres";
-import {eq, and, isNull} from "drizzle-orm";
+import {and, eq, isNull} from "drizzle-orm";
 
-import { materialPrices, materials } from "../infrastructure/databases/postgres/schemas.js";
+import {materialPrices, materials} from "../infrastructure/databases/postgres/schemas.js";
+import {NotFoundError} from "../services/models/errors.js";
 
 
 export class MaterialAdapter implements IMaterialAdapter {
@@ -15,15 +15,13 @@ export class MaterialAdapter implements IMaterialAdapter {
         this.materialsDB = db
     }
 
-    async listMaterial(): Promise<Result<Material[]>> {
+    async listMaterial(): Promise<Material[]> {
+        const getResult = await this.materialsDB
+            .select()
+            .from(materials)
 
-        try {
-            const getResult = await this.materialsDB
-                .select()
-                .from(materials)
-
-            if (getResult.length === 0) {
-                return { success: false, message: "DB Error: Materials Not Found"}
+        if (getResult.length === 0) {
+               throw(new NotFoundError("DB Error: Materials Not Found"))
             }
 
             const materialList: Material[] = []
@@ -40,42 +38,28 @@ export class MaterialAdapter implements IMaterialAdapter {
                 })
             })
 
-            return { success: true, data: materialList };
-
-        } catch (err) {
-            const msg = err instanceof Error ? err.message : "Unknown error"
-            return {success: false, message: "DB Error: Retrieving Materials" + msg}
-        }
-
+            return materialList
     }
 
-    async getMaterialPrice(materialCode: string):  Promise<Result<MaterialPrice>>{
-        try {
-            const getResult = await this.materialsDB
+    async getMaterialPrice(materialCode: string):  Promise<MaterialPrice>{
+       const getResult = await this.materialsDB
                 .select()
                 .from(materialPrices)
                 .where(and(eq(materialPrices.materialCode, materialCode), isNull(materialPrices.validTo)))
                 .limit(1)
+       const dbPrice = getResult[0]
 
-            const dbPrice = getResult[0]
+       if (!dbPrice) {
+            throw(new NotFoundError("DB Error: Material Price Not Found"))
+       }
 
-            if (!dbPrice) {
-                return { success: false, message: "DB Error: Material Price Not Found"}
-            }
-
-            const materialPrice: MaterialPrice = {
+        return {
                 id: dbPrice.id,
                 materialCode: dbPrice.materialCode,
                 materialPrice: Number(dbPrice.materialPrice),
                 validFrom: dbPrice.validFrom,
                 validTo: dbPrice.validTo
-            };
-
-            return { success: true, data: materialPrice };
-
-        } catch (err) {
-            const msg = err instanceof Error ? err.message : "Unknown error"
-            return {success: false, message: "DB Error: Retrieving Material Price" + msg}
         }
     }
+
 }

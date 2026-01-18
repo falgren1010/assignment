@@ -1,10 +1,9 @@
 import type {IQuotesService} from "../controllers/quotes.controller.js";
 import type {Quote} from "./models/models.js";
-import type {Result} from "./models/common.models.js";
 
 export interface IQuotesAdapter{
-    createQuote(quote: Quote): Promise<Result<Quote>>
-    getQuote(id: string): Promise<Result<Quote>>
+    createQuote(quote: Quote): Promise<Quote>
+    getQuote(id: string): Promise<Quote>
 }
 
 export class QuotesService implements IQuotesService{
@@ -14,25 +13,15 @@ export class QuotesService implements IQuotesService{
         this.quotesAdapter = quotesAdp
     }
 
-    async createQuote(quote: Quote): Promise<Result<Quote>> {
+    async createQuote(quote: Quote): Promise<Quote> {
         // todo validation
 
-        const result = await this.quotesAdapter.createQuote(quote)
-        if (!result.success){
-            return { success: false, message: "Error creating Quote:" + result.message }
-        }
-
-        return { success: true, data: result.data }
+        return await this.quotesAdapter.createQuote(quote)
     }
 
-    async getQuote(id: string): Promise<Result<Quote>> {
+    async getQuote(id: string): Promise<Quote> {
         // todo id validation
 
-        const result = await this.quotesAdapter.getQuote(id)
-        if (!result.success){
-            return { success: false, message: "Not Found: " + result.message }
-        }
-
-        return { success: true, data: result.data }
+        return await this.quotesAdapter.getQuote(id)
     }
 }

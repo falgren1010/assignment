@@ -1,11 +1,12 @@
 import type {RouteInitializer} from "../registry/registry.js";
 import type {Context, Hono} from "hono";
-import type {Result} from "../services/models/common.models.js";
 import type {FileDetails} from "../services/models/models.js"
+import {renderError} from "./common.js";
+import {AppError} from "../services/models/errors.js";
 
 export interface IFilesService {
-    uploadFile(file: File): Promise<Result<FileDetails>>
-    getFileDetails(id: string): Promise<Result<FileDetails>>
+    uploadFile(file: File): Promise<FileDetails>
+    getFileDetails(id: string): Promise<FileDetails>
 }
 
 export class FilesController implements RouteInitializer {
@@ -25,33 +26,30 @@ export class FilesController implements RouteInitializer {
             const form = await c.req.parseBody()
             const file = form["file"] as File
 
-            const result = await this.filesService.uploadFile(file)
-            if (!result.success) {
-                return c.text("Error: " + result.message, 400)
-            }
+            const fileDetails = await this.filesService.uploadFile(file)
 
-            return c.json(result.data, 200)
+            return c.json(fileDetails, 200)
 
         } catch (err) {
-            const msg = err instanceof Error ? err.message : "Unknown error"
-            return c.text("Internal Server Error: " + msg, 500)
+            if(err instanceof AppError){
+                return renderError(err, c)
+            }
+            return c.text("Internal Server Error: Unknown Error ", 500)
         }
     }
 
     private getFileDetails = async (c: Context) => {
         try{
             const id = c.req.param("id")
+            const fileDetails = await this.filesService.getFileDetails(id)
 
-            const result = await this.filesService.getFileDetails(id)
-            if (!result.success) {
-                return c.text("Bad Request: " + result.message, 400)
-            }
-
-            return c.json(result.data, 200)
+            return c.json(fileDetails, 200)
 
         } catch (err) {
-            const msg = err instanceof Error ? err.message : "Unknown error"
-            return c.text("Internal Server Error: " + msg, 500)
+            if(err instanceof AppError){
+                return renderError(err, c)
+            }
+            return c.text("Internal Server Error: Unknown Error ", 500)
         }
     }
 }

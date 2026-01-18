@@ -1,11 +1,12 @@
 import type {RouteInitializer} from "../registry/registry.js";
 import type {Context, Hono} from "hono";
 import type {Quote} from "../services/models/models.js";
-import type {Result} from "../services/models/common.models.js";
+import {renderError} from "./common.js";
+import {AppError} from "../services/models/errors.js";
 
 export interface IQuotesService{
-    createQuote(quote: Quote): Promise<Result<Quote>>
-    getQuote(id: string): Promise<Result<Quote>>
+    createQuote(quote: Quote): Promise<Quote>
+    getQuote(id: string): Promise<Quote>
 }
 
 export class QuotesController implements RouteInitializer {
@@ -22,35 +23,31 @@ export class QuotesController implements RouteInitializer {
 
     private createQuote = async (c: Context) => {
         try {
-            const quote = await c.req.json<Quote>()
+            const quotePayload = await c.req.json<Quote>()
+            const quote = await this.quotesService.createQuote(quotePayload)
 
-            const result = await this.quotesService.createQuote(quote)
-            if (!result.success) {
-                return c.text("Bad Request: " + result.message, 400)
-            }
-
-            return c.json(result.data, 200)
+            return c.json(quote, 200)
 
         } catch (err) {
-            const msg = err instanceof Error ? err.message : "Unknown error"
-            return c.text("Internal Server Error: " + msg, 500)
+            if(err instanceof AppError){
+                return renderError(err, c)
+            }
+            return c.text("Internal Server Error: Unknown Error ", 500)
         }
     }
 
     private getQuote = async (c: Context) => {
         try{
             const id = c.req.param("id")
-
             const result = await this.quotesService.getQuote(id)
-            if (!result.success) {
-                return c.text("Bad Request: " + result.message, 400)
-            }
 
-            return c.json(result.data, 200)
+            return c.json(result, 200)
 
         } catch (err) {
-            const msg = err instanceof Error ? err.message : "Unknown error"
-            return c.text("Internal Server Error: " + msg, 500)
+            if(err instanceof AppError){
+                return renderError(err, c)
+            }
+            return c.text("Internal Server Error: Unknown Error ", 500)
         }
     }
 }

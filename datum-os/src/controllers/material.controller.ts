@@ -1,10 +1,11 @@
 import type {RouteInitializer} from "../registry/registry.js";
 import type {Context, Hono} from "hono";
-import type {Result} from "../services/models/common.models.js";
 import type {Material} from "../services/models/models.js"
+import {renderError} from "./common.js";
+import {AppError} from "../services/models/errors.js";
 
 export interface IMaterialService{
-    listMaterial(): Promise<Result<Material[]>>
+    listMaterial(): Promise<Material[]>
 }
 
 export class MaterialController implements RouteInitializer{
@@ -20,16 +21,15 @@ export class MaterialController implements RouteInitializer{
 
     private listMaterial = async (c: Context) => {
         try{
-            const result = await this.materialService.listMaterial()
-            if (!result.success) {
-                return c.text("Bad Request: " + result.message, 400)
-            }
+            const materials = await this.materialService.listMaterial()
 
-            return c.json(result.data, 200)
+            return c.json(materials, 200)
 
         } catch (err) {
-            const msg = err instanceof Error ? err.message : "Unknown error"
-            return c.text("Internal Server Error: " + msg, 500)
+            if(err instanceof AppError){
+                return renderError(err, c)
+            }
+            return c.text("Internal Server Error: Unknown Error ", 500)
         }
     }
 }
