@@ -1,0 +1,31 @@
+get:
+  operationId: getMaterialList
+  tags:
+    - Material
+  summary: Get Material List
+  description: Get Material List
+  responses:
+    "200":
+      description: 200 OK
+      content:
+        application/json:
+          schema:
+            $ref: "material.yml#/components/schemas/MaterialList"
+    "401":
+      description: 401 UNAUTHORIZED
+      content:
+        application/json:
+          schema:
+            $ref: "../common/error.yml#/components/schemas/Error"
+    "404":
+      description: 404 NOT FOUND
+      content:
+        application/json:
+          schema:
+            $ref: "../common/error.yml#/components/schemas/Error"
+    "500":
+      description: 500 INTERNAL SERVER ERROR
+      content:
+        application/json:
+          schema:
+            $ref: "../common/error.yml#/components/schemas/Error"

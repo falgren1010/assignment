@@ -1,0 +1,33 @@
+get:
+  operationId: getFileDetails
+  tags:
+    - File
+  summary: Get Details of a File
+  description: get Details of a File
+  parameters:
+    - $ref: "file.yml#/components/parameters/ID"
+  responses:
+    "200":
+      description: 200 OK
+      content:
+        application/json:
+          schema:
+            $ref: "file.yml#/components/schemas/FileDetails"
+    "401":
+      description: 401 UNAUTHORIZED
+      content:
+        application/json:
+          schema:
+            $ref: "../common/error.yml#/components/schemas/Error"
+    "404":
+      description: 404 NOT FOUND
+      content:
+        application/json:
+          schema:
+            $ref: "../common/error.yml#/components/schemas/Error"
+    "500":
+      description: 500 INTERNAL SERVER ERROR
+      content:
+        application/json:
+          schema:
+            $ref: "../common/error.yml#/components/schemas/Error"

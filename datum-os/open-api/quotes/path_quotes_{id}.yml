@@ -1,0 +1,33 @@
+get:
+  operationId: getQuote
+  tags:
+    - Quote
+  summary: Get Quote by ID
+  description: Get Quote by ID
+  parameters:
+    - $ref: "quote.yml#/components/parameters/ID"
+  responses:
+    "200":
+      description: 200 OK
+      content:
+        application/json:
+          schema:
+            $ref: "quote.yml#/components/schemas/Quote"
+    "401":
+      description: 401 UNAUTHORIZED
+      content:
+        application/json:
+          schema:
+            $ref: "../common/error.yml#/components/schemas/Error"
+    "404":
+      description: 404 NOT FOUND
+      content:
+        application/json:
+          schema:
+            $ref: "../common/error.yml#/components/schemas/Error"
+    "500":
+      description: 500 INTERNAL SERVER ERROR
+      content:
+        application/json:
+          schema:
+            $ref: "../common/error.yml#/components/schemas/Error"

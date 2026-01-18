@@ -1,0 +1,63 @@
+components:
+  parameters:
+    ID:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+  schemas:
+    FileDetails:
+      type: object
+      properties:
+        id:
+          type: string
+        originalName:
+          type: string
+        storagePath:
+          type: string
+        sizeBytes:
+          type: number
+          format: int64
+        mimeType:
+          type: string
+        geometry:
+          oneOf:
+            - $ref: '#/components/schemas/GeometryProperties'
+            - type: 'null'
+        uploadedAt:
+          type: string
+          format: date-time
+      required:
+        - originalName
+        - storagePath
+        - sizeBytes
+        - mimeType
+        - uploadedAt
+    GeometryProperties:
+      type: object
+      properties:
+        boundingBox:
+          type: object
+          properties:
+            x:
+              type: number
+            y:
+              type: number
+            z:
+              type: number
+          required:
+            - x
+            - y
+            - z
+        volume:
+          type: number
+        volumeCm3:
+          type: number
+        surfaceArea:
+          type: number
+      required:
+        - boundingBox
+        - volume
+        - volumeCm3
+        - surfaceArea

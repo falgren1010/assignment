@@ -1,0 +1,33 @@
+post:
+  operationId: createOrder
+  tags:
+    - Order
+  summary: create Order from Quote
+  description: create Order from Quote
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: 'order.yml#/components/schemas/Order'
+  responses:
+    "201":
+      description: 201 CREATED
+      content:
+        application/json:
+          schema:
+            $ref: 'order.yml#/components/schemas/OrderID'
+    "400":
+      description: 400 BAD REQUEST
+    "401":
+      description: 401 UNAUTHORIZED
+      content:
+        application/json:
+          schema:
+            $ref: "../common/error.yml#/components/schemas/Error"
+    "500":
+      description: 500 INTERNAL SERVER ERROR
+      content:
+        application/json:
+          schema:
+            $ref: "../common/error.yml#/components/schemas/Error"

@@ -1,0 +1,33 @@
+components:
+  schemas:
+    Material:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        code:
+          type: string
+        price:
+          type: number
+        leadTime:
+          type: number
+        properties:
+          type: array
+          items:
+            type: string
+      required:
+        - name
+        - code
+        - price
+        - leadTime
+        - properties
+    MaterialList:
+      required:
+        - materials
+      properties:
+        materials:
+          type: array
+          items:
+            $ref: "#/components/schemas/Material"
