@@ -1,8 +1,8 @@
 import type {NodePgDatabase} from "drizzle-orm/node-postgres";
 import type {Quote} from "../services/models/models.js";
-import type {Result} from "../services/models/common.models.js";
 import {quotes} from "../infrastructure/databases/postgres/schemas.js";
 import {eq} from "drizzle-orm";
+import {InternalServerError, NotFoundError} from "../services/models/errors.js";
 
 type QuotesInsert = typeof quotes.$inferInsert
 
@@ -13,7 +13,7 @@ export class QuotesAdapter{
         this.quotesDB = db
     }
 
-    async createQuote(quote: Quote): Promise<Result<Quote>>{
+    async createQuote(quote: Quote): Promise<Quote>{
 
         const expireDate = new Date();
         expireDate.setDate(expireDate.getDate() + 7);
@@ -32,43 +32,37 @@ export class QuotesAdapter{
             expiresAt: expireDate,
         };
 
-        try {
-            const insertResult = await this.quotesDB
-                .insert(quotes)
-                .values(dbObject)
-                .returning();
 
-            const dbQuote = insertResult[0]
+        const insertResult = await this.quotesDB
+            .insert(quotes)
+            .values(dbObject)
+            .returning();
 
-            if(!dbQuote){
-                return {success: false, message: "DB Error: Insert Failed"}
-            }
+        const dbQuote = insertResult[0]
 
-            const domainQuote: Quote = {
-                id: dbQuote.id,
-                fileId: dbQuote.fileId,
-                materialId: dbQuote.materialId,
-                materialName: dbQuote.materialName,
-                materialPriceFactor: Number(dbQuote.materialPriceFactor),
-                quantity: dbQuote.quantity,
-                quantityDiscount: Number(dbQuote.quantityDiscount),
-                status: dbQuote.status,
-                totalPrice: Number(dbQuote.totalPrice),
-                unitPrice: Number(dbQuote.unitPrice),
-                volumeCm3: Number(dbQuote.volumeCm3),
-                createdAt: dbQuote.createdAt,
-                expiresAt: dbQuote.expiresAt
-            }
-
-            return {success: true, data: domainQuote}
-
-        } catch {
-            return {success: false, message: "DB Error: Insert Failed"}
+        if(!dbQuote){
+            throw( new InternalServerError("DB Error: Insert Failed"))
         }
+
+        return {
+            id: dbQuote.id,
+            fileId: dbQuote.fileId,
+            materialId: dbQuote.materialId,
+            materialName: dbQuote.materialName,
+            materialPriceFactor: Number(dbQuote.materialPriceFactor),
+            quantity: dbQuote.quantity,
+            quantityDiscount: Number(dbQuote.quantityDiscount),
+            status: dbQuote.status,
+            totalPrice: Number(dbQuote.totalPrice),
+            unitPrice: Number(dbQuote.unitPrice),
+            volumeCm3: Number(dbQuote.volumeCm3),
+            createdAt: dbQuote.createdAt,
+            expiresAt: dbQuote.expiresAt
+        }
+
     }
 
-    async getQuote(id: string): Promise<Result<Quote>>{
-        try {
+    async getQuote(id: string): Promise<Quote>{
             const getResult = await this.quotesDB
                 .select()
                 .from(quotes)
@@ -78,10 +72,10 @@ export class QuotesAdapter{
             const dbQuote = getResult[0]
 
             if(!dbQuote){
-                return {success: false, message: "DB Error: Retrieving Quote"}
+               throw(new NotFoundError("DB Error: Quote Not Found"))
             }
 
-            const domainQuote: Quote = {
+        return {
                 id: dbQuote.id,
                 fileId: dbQuote.fileId,
                 materialId: dbQuote.materialId,
@@ -97,10 +91,5 @@ export class QuotesAdapter{
                 expiresAt: dbQuote.expiresAt
             }
 
-            return {success: true, data: domainQuote}
-
-        } catch {
-            return {success: false, message: "DB Error: Retrieving Quote"}
-        }
     }
 }

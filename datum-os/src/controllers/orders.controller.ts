@@ -1,12 +1,13 @@
 import type {RouteInitializer} from "../registry/registry.js";
 import type {Context, Hono} from "hono";
 import type {Order, StripePaymentIntent} from "../services/models/models.js";
-import type {Result} from "../services/models/common.models.js";
+import {AppError} from "../services/models/errors.js";
+import {renderError} from "./common.js";
 
 export interface IOrdersService{
-    createOrder(order: Order): Promise<Result<string>>
-    getOrder(id: string): Promise<Result<Order>>
-    processPayment(paymentIntent: StripePaymentIntent): Promise<Result<void>>
+    createOrder(order: Order): Promise<string>
+    getOrder(id: string): Promise<Order>
+    processPayment(paymentIntent: StripePaymentIntent): Promise<void>
 }
 
 export class OrdersController implements RouteInitializer{
@@ -27,16 +28,14 @@ export class OrdersController implements RouteInitializer{
             const order = await c.req.json<Order>()
 
             const result = await this.ordersService.createOrder(order)
-            if (!result.success) {
-                return c.text("Bad Request: " + result.message, 400)
-            }
 
-            return c.json(result.data, 200)
+            return c.json(result, 200)
 
         } catch (err) {
-            const msg = err instanceof Error ? err.message : "Unknown error"
-
-            return c.text("Internal Server Error: " + msg, 500)
+            if(err instanceof AppError){
+                return renderError(err, c)
+            }
+            return c.text("Internal Server Error: Unknown Error ", 500)
         }
     }
 
@@ -44,33 +43,30 @@ export class OrdersController implements RouteInitializer{
         try{
             const id = c.req.param("id")
 
-            const result = await this.ordersService.getOrder(id)
-            if (!result.success) {
-                return c.text("Bad Request: " + result.message, 400)
-            }
+            const order = await this.ordersService.getOrder(id)
 
-            return c.json(result.data, 200)
+            return c.json(order, 200)
 
         } catch (err) {
-            const msg = err instanceof Error ? err.message : "Unknown error"
-            return c.text("Internal Server Error: " + msg, 500)
+            if(err instanceof AppError){
+                return renderError(err, c)
+            }
+            return c.text("Internal Server Error: Unknown Error ", 500)
         }
     }
 
     private processPayment = async (c: Context) => {
         try {
             const paymentIntent = await c.req.json<StripePaymentIntent>()
-
-            const result = await this.ordersService.processPayment(paymentIntent)
-            if (!result.success) {
-                return c.text("Bad Request: " + result.message, 400)
-            }
+            await this.ordersService.processPayment(paymentIntent)
 
             return c.text("OK", 200)
 
         } catch (err) {
-            const msg = err instanceof Error ? err.message : "Unknown error"
-            return c.text("Internal Server Error: " + msg, 500)
+            if(err instanceof AppError){
+                return renderError(err, c)
+            }
+            return c.text("Internal Server Error: Unknown Error ", 500)
         }
     }
 }

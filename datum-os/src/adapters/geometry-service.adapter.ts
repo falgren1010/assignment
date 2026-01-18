@@ -1,6 +1,6 @@
 import type {GeometryResult} from "../services/models/models.js";
-import type { Result } from "../services/models/common.models.js";
 import type {IGeometryServiceAdapter} from "../services/files.service.js";
+import {InternalServerError} from "../services/models/errors.js";
 
 export interface IGeometryService {
     extractProperties(fileBuffer: Buffer): Promise<GeometryResult>;
@@ -13,29 +13,22 @@ export class GeometryServiceAdapter implements IGeometryServiceAdapter {
 
     constructor(private readonly geometryService: IGeometryService) {}
 
-    async extractProperties(fileBuffer: Buffer): Promise<Result<GeometryResult>> {
+    async extractProperties(fileBuffer: Buffer): Promise<GeometryResult> {
         for (let attempt = 1; attempt <= GeometryServiceAdapter.MAX_ATTEMPTS; attempt++) {
             try {
-                const geoData = await withTimeout(
+                return await withTimeout(
                     this.geometryService.extractProperties(fileBuffer),
                     GeometryServiceAdapter.TIMEOUT_MS
-                );
+                )
 
-                return {success: true, data: geoData}
-
-            } catch (err) {
+            } catch {
                 if (attempt >= GeometryServiceAdapter.MAX_ATTEMPTS) {
-                    return {
-                        success: false,
-                        message: err instanceof Error
-                            ? err.message
-                            : "Geometry Service failed or not available"
-                    };
+                    throw (new InternalServerError("Unexpected Error: Geometry Service failed or not available"))
                 }
             }
         }
 
-        return {success: false, message: "Geometry Service failed or not available"}
+        throw (new InternalServerError("Unexpected Error: Geometry Service failed or not available"))
     }
 }
 
