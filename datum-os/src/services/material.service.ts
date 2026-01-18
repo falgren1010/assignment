@@ -4,7 +4,7 @@ import type {IMaterialService} from "../controllers/material.controller.js";
 
 export interface IMaterialAdapter{
     listMaterial(): Promise<Result<Material[]>>
-    getMaterialPrice():  Promise<Result<MaterialPrice>>
+    getMaterialPrice(materialCode: string):  Promise<Result<MaterialPrice>>
 }
 
 export class MaterialService implements IMaterialService{
@@ -25,10 +25,11 @@ export class MaterialService implements IMaterialService{
             return { success: false, message: "Error retrieving Materials" };
         }
 
+        // add current price to material
         for (const material of result.data) {
-            const priceResult = await this.materialAdapter.getMaterialPrice();
+            const priceResult = await this.materialAdapter.getMaterialPrice(material.code);
             if (!priceResult.success) {
-                return {success: false, message: "Error retrieving Material prices"};
+                return {success: false, message: "Error retrieving Material prices" + priceResult.message};
             }
 
             if (!priceResult.data) {

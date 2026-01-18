@@ -3,7 +3,7 @@ import type {Quote} from "./models/models.js";
 import type {Result} from "./models/common.models.js";
 
 export interface IQuotesAdapter{
-    createQuote(quote: Quote): Promise<Result<void>>
+    createQuote(quote: Quote): Promise<Result<Quote>>
     getQuote(id: string): Promise<Result<Quote>>
 }
 
@@ -14,7 +14,7 @@ export class QuotesService implements IQuotesService{
         this.quotesAdapter = quotesAdp
     }
 
-    async createQuote(quote: Quote): Promise<Result<void>> {
+    async createQuote(quote: Quote): Promise<Result<Quote>> {
         // todo validation
 
         const result = await this.quotesAdapter.createQuote(quote)
@@ -22,7 +22,7 @@ export class QuotesService implements IQuotesService{
             return { success: false, message: "Error creating Quote:" + result.message }
         }
 
-        return { success: true, data: null }
+        return { success: true, data: result.data }
     }
 
     async getQuote(id: string): Promise<Result<Quote>> {

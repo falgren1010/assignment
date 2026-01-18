@@ -8,7 +8,10 @@
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "generate:types": "openapi-typescript ./open-api/openapi.yml -o ./src/controllers/api-models/models.ts",
+    "db:generate": "drizzle-kit generate --config=./src/infrastructure/databases/postgres/drizzle.config.ts",
+    "db:push": "drizzle-kit push --config=./src/infrastructure/databases/postgres/drizzle.config.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.9",
@@ -19,6 +22,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
+    "@redocly/cli": "^2.14.5",
     "@types/node": "^20.11.17",
     "@types/pg": "^8.16.0",
     "@typescript-eslint/eslint-plugin": "^8.53.0",
@@ -28,6 +32,7 @@
     "eslint": "^9.39.2",
     "globals": "^17.0.0",
     "jiti": "^2.6.1",
+    "openapi-typescript": "^7.10.1",
     "tsx": "^4.21.0",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.53.0"

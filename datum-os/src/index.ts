@@ -1,10 +1,22 @@
 import { serve } from '@hono/node-server'
 import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/node-postgres';
+import { Pool } from "pg";
 import {Registry} from "./registry/registry.js";
+import "dotenv/config";
+
 
 // Create and init DB connection
-const database = drizzle(process.env.DATABASE_URL!);
+const pool = new Pool({
+  host: process.env.POSTGRES_HOST,
+  port: Number(process.env.POSTGRES_PORT),
+  user: process.env.POSTGRES_USER,
+  password: process.env.POSTGRES_PASSWORD,
+  database: process.env.POSTGRES_DB,
+});
+
+const database = drizzle(pool);
+
 
 // Create Registry and init API Routes
 const registry = new Registry(database)

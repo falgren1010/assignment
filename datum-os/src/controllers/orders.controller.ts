@@ -4,7 +4,7 @@ import type {Order, StripePaymentIntent} from "../services/models/models.js";
 import type {Result} from "../services/models/common.models.js";
 
 export interface IOrdersService{
-    createOrder(order: Order): Promise<Result<void>>
+    createOrder(order: Order): Promise<Result<string>>
     getOrder(id: string): Promise<Result<Order>>
     processPayment(paymentIntent: StripePaymentIntent): Promise<Result<void>>
 }
@@ -31,7 +31,7 @@ export class OrdersController implements RouteInitializer{
                 return c.text("Bad Request: " + result.message, 400)
             }
 
-            return c.text("OK", 200)
+            return c.json(result.data, 200)
 
         } catch (err) {
             const msg = err instanceof Error ? err.message : "Unknown error"
@@ -53,7 +53,6 @@ export class OrdersController implements RouteInitializer{
 
         } catch (err) {
             const msg = err instanceof Error ? err.message : "Unknown error"
-
             return c.text("Internal Server Error: " + msg, 500)
         }
     }
@@ -71,7 +70,6 @@ export class OrdersController implements RouteInitializer{
 
         } catch (err) {
             const msg = err instanceof Error ? err.message : "Unknown error"
-
             return c.text("Internal Server Error: " + msg, 500)
         }
     }

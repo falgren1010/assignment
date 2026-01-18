@@ -3,7 +3,7 @@ import type {Order, StripePaymentIntent} from "./models/models.js";
 import type {Result} from "./models/common.models.js";
 
 export interface IOrdersAdapter{
-    createOrder(order: Order): Promise<Result<void>>
+    createOrder(order: Order): Promise<Result<string>>
     getOrder(id: string): Promise<Result<Order>>
     processPayment(paymentIntent: StripePaymentIntent): Promise<Result<void>>
 }
@@ -15,7 +15,7 @@ export class OrdersService implements IOrdersService{
         this.ordersAdapter = ordersAdp
     }
 
-     async createOrder(order: Order): Promise<Result<void>> {
+     async createOrder(order: Order): Promise<Result<string>> {
         const result = await this.ordersAdapter.createOrder(order)
         if(!result.success){
             return { success: false, message: "Error creating Order: " + result.message }

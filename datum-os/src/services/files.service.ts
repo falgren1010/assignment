@@ -1,6 +1,6 @@
 import type {IFilesService} from "../controllers/files.controller.js";
 import type {Result} from "./models/common.models.js";
-import type {File as FileDetails, GeometryProperties, GeometryResult} from "./models/models.js";
+import type {FileDetails, GeometryProperties, GeometryResult} from "./models/models.js";
 
 export interface IFilesAdapter{
     uploadFileToDatabase(file: File): Promise<Result<string>>
@@ -89,7 +89,6 @@ export class FilesService implements IFilesService{
 
     private extractFileDetails(dbFileID: string, file: File, geoData: GeometryProperties): FileDetails{
         return {
-            id: file.name, //overwritten by postgres later
             originalName: file.name,
             storagePath: dbFileID,
             sizeBytes: file.size,
