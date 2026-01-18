@@ -1,0 +1,31 @@
+post:
+  operationId: processPayment
+  tags:
+    - Order
+  summary: process Payment of Order
+  description: process Payment of Order
+  parameters:
+    - $ref: "order.yml#/components/parameters/ID"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: 'order.yml#/components/schemas/StripePaymentIntent'
+  responses:
+    "200":
+      description: 200 OK
+    "400":
+      description: 400 BAD REQUEST
+    "401":
+      description: 401 UNAUTHORIZED
+      content:
+        application/json:
+          schema:
+            $ref: "../common/error.yml#/components/schemas/Error"
+    "500":
+      description: 500 INTERNAL SERVER ERROR
+      content:
+        application/json:
+          schema:
+            $ref: "../common/error.yml#/components/schemas/Error"

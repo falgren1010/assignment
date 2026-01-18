@@ -1,0 +1,54 @@
+components:
+  parameters:
+    ID:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+  schemas:
+    Quote:
+      type: object
+      properties:
+        id:
+          type: string
+        fileId:
+          type: string
+        materialId:
+          type: string
+        materialName:
+          type: string
+        materialPriceFactor:
+          type: number
+        quantity:
+          type: number
+        volumeCm3:
+          type: number
+        unitPrice:
+          type: number
+        quantityDiscount:
+          type: number
+        totalPrice:
+          type: number
+        status:
+          type: string
+          enum: [draft, ready, ordered, expired]
+        createdAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+      required:
+        - fileId
+        - materialId
+        - materialName
+        - materialPriceFactor
+        - quantity
+        - volumeCm3
+        - unitPrice
+        - quantityDiscount
+        - totalPrice
+        - status
+        - createdAt
+        - expiresAt

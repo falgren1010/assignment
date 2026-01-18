@@ -1,0 +1,29 @@
+openapi: "3.0.3"
+info:
+  version: 0.0.0
+  title: Assignment Backend
+paths:
+
+  # Files
+  /api/files/upload:
+    $ref: "./files/path_files_upload.yml"
+  /api/files/{id}:
+    $ref: "./files/path_files_{id}.yml"
+
+  # Materials
+  /api/materials:
+    $ref: "./material/path_materials.yml"
+
+  # Orders
+  /api/orders:
+    $ref: "./orders/path_orders.yml"
+  /api/orders/{id}:
+    $ref: "./orders/path_orders_{id}.yml"
+  /api/orders/{id}/payment:
+    $ref: "./orders/path_orders_{id}_payment.yml"
+
+  # Quotes
+  /api/quotes:
+    $ref: "./quotes/path_quotes.yml"
+  /api/quotes/{id}:
+    $ref: "./quotes/path_quotes_{id}.yml"

@@ -1,0 +1,33 @@
+get:
+  operationId: getOrder
+  tags:
+    - Order
+  summary: Get Order by ID
+  description: Get Order by ID
+  parameters:
+    - $ref: "order.yml#/components/parameters/ID"
+  responses:
+    "200":
+      description: 200 OK
+      content:
+        application/json:
+          schema:
+            $ref: "order.yml#/components/schemas/Order"
+    "401":
+      description: 401 UNAUTHORIZED
+      content:
+        application/json:
+          schema:
+            $ref: "../common/error.yml#/components/schemas/Error"
+    "404":
+      description: 404 NOT FOUND
+      content:
+        application/json:
+          schema:
+            $ref: "../common/error.yml#/components/schemas/Error"
+    "500":
+      description: 500 INTERNAL SERVER ERROR
+      content:
+        application/json:
+          schema:
+            $ref: "../common/error.yml#/components/schemas/Error"

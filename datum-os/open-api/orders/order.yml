@@ -1,0 +1,77 @@
+components:
+  parameters:
+    ID:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+  schemas:
+    OrderID:
+      type: string
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+        quoteId:
+          type: string
+        customerName:
+          type: string
+        customerEmail:
+          type: string
+        customerCompany:
+          type: string
+          nullable: true
+        paymentMethod:
+          type: string
+          enum: [card, purchase_order]
+        paymentStatus:
+          type: string
+          enum: [pending, paid, failed]
+        purchaseOrderFileId:
+          type: string
+          nullable: true
+        totalAmount:
+          type: number
+        currency:
+          type: string
+          enum: [EUR]
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - quoteId
+        - customerName
+        - customerEmail
+        - paymentMethod
+        - paymentStatus
+        - totalAmount
+        - currency
+        - createdAt
+    StripePaymentIntent:
+      type: object
+      properties:
+        id:
+          type: string
+        amount:
+          type: number
+        currency:
+          type: string
+        status:
+          type: string
+        client_secret:
+          type: string
+          nullable: true
+        payment_method:
+          type: string
+          nullable: true
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - id
+        - amount
+        - currency
+        - status
