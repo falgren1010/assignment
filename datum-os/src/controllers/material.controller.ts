@@ -29,7 +29,6 @@ export class MaterialController implements RouteInitializer{
 
         } catch (err) {
             const msg = err instanceof Error ? err.message : "Unknown error"
-
             return c.text("Internal Server Error: " + msg, 500)
         }
     }

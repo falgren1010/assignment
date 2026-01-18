@@ -1,5 +1,5 @@
-export interface File {
-    id: string;
+export interface FileDetails {
+    id?: string;
     originalName: string;
     storagePath: string;
     sizeBytes: number;
@@ -27,7 +27,7 @@ export interface GeometryProperties {
 }
 
 export interface Quote {
-    id: string;
+    id?: string;
     fileId: string;
 
     // Configuration snapshot (frozen at quote time)
@@ -49,7 +49,7 @@ export interface Quote {
 }
 
 export interface Order {
-    id: string;
+    id?: string;
     quoteId: string;
 
     // Customer
@@ -70,14 +70,17 @@ export interface Order {
 }
 
 export interface Material {
+    id?: string
     name: string,
     code: string
     price: number // euro/cm^3
     leadTime: number // days
     properties: string[]
+    available: boolean
 }
 
 export interface MaterialPrice {
+    id?: string
     materialCode: string,
     materialPrice: number
     validFrom: Date,
@@ -85,7 +88,7 @@ export interface MaterialPrice {
 }
 
 export interface StripePaymentIntent {
-    id: string;
+    id?: string;
     amount: number;
     currency: string;
     status: string;

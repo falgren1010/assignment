@@ -1,7 +1,7 @@
 import type {RouteInitializer} from "../registry/registry.js";
 import type {Context, Hono} from "hono";
 import type {Result} from "../services/models/common.models.js";
-import type {File as FileDetails} from "../services/models/models.js"
+import type {FileDetails} from "../services/models/models.js"
 
 export interface IFilesService {
     uploadFile(file: File): Promise<Result<FileDetails>>
@@ -27,14 +27,13 @@ export class FilesController implements RouteInitializer {
 
             const result = await this.filesService.uploadFile(file)
             if (!result.success) {
-                return c.text("Bad Request: " + result.message, 400)
+                return c.text("Error: " + result.message, 400)
             }
 
             return c.json(result.data, 200)
 
         } catch (err) {
             const msg = err instanceof Error ? err.message : "Unknown error"
-
             return c.text("Internal Server Error: " + msg, 500)
         }
     }
@@ -52,7 +51,6 @@ export class FilesController implements RouteInitializer {
 
         } catch (err) {
             const msg = err instanceof Error ? err.message : "Unknown error"
-
             return c.text("Internal Server Error: " + msg, 500)
         }
     }

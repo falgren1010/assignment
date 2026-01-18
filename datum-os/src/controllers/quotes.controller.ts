@@ -4,7 +4,7 @@ import type {Quote} from "../services/models/models.js";
 import type {Result} from "../services/models/common.models.js";
 
 export interface IQuotesService{
-    createQuote(quote: Quote): Promise<Result<void>>
+    createQuote(quote: Quote): Promise<Result<Quote>>
     getQuote(id: string): Promise<Result<Quote>>
 }
 
@@ -29,11 +29,10 @@ export class QuotesController implements RouteInitializer {
                 return c.text("Bad Request: " + result.message, 400)
             }
 
-            return c.text("OK", 200)
+            return c.json(result.data, 200)
 
         } catch (err) {
             const msg = err instanceof Error ? err.message : "Unknown error"
-
             return c.text("Internal Server Error: " + msg, 500)
         }
     }
@@ -51,7 +50,6 @@ export class QuotesController implements RouteInitializer {
 
         } catch (err) {
             const msg = err instanceof Error ? err.message : "Unknown error"
-
             return c.text("Internal Server Error: " + msg, 500)
         }
     }
