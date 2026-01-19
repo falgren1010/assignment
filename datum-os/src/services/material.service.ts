@@ -3,6 +3,7 @@ import type {IMaterialService} from "../controllers/material.controller.js";
 
 export interface IMaterialAdapter{
     listMaterial(): Promise<Material[]>
+    getMaterial(materialID: string): Promise<Material>
     getMaterialPrice(materialCode: string):  Promise<MaterialPrice>
 }
 

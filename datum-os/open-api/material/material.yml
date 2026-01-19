@@ -17,12 +17,15 @@ components:
           type: array
           items:
             type: string
+        available:
+            type: boolean
       required:
         - name
         - code
         - price
         - leadTime
         - properties
+        - available
     MaterialList:
       required:
         - materials
