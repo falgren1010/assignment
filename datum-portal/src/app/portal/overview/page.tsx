@@ -10,33 +10,49 @@ type FileDetails = components["schemas"]["FileDetails"];
 export default function SummaryPage() {
     const router = useRouter();
 
-    const [material, setMaterial] = useState<Material | null>(null);
-    const [fileDetails, setFileDetails] = useState<FileDetails | null>(null);
-    const [quantity, setQuantity] = useState<number>(1);
-    const [quantityError, setQuantityError] = useState<boolean>(false);
+    const [quantityError, setQuantityError] = useState(false);
 
-    useEffect(() => {
-        const storedMaterial = sessionStorage.getItem("selectedMaterial");
-        const storedFile = sessionStorage.getItem("localFileDetails");
-        const storedQuantity = sessionStorage.getItem("quantity");
-
-        if (storedMaterial) setMaterial(JSON.parse(storedMaterial));
-        if (storedFile) setFileDetails(JSON.parse(storedFile));
-        if (storedQuantity) setQuantity(Number(storedQuantity));
-    }, []);
-
-    useEffect(() => {
-        if(quantity > 0 && quantity <= 500){
-            setQuantityError(false)
+    const [material] = useState<Material | null>(() => {
+        try {
+            const raw = sessionStorage.getItem("selectedMaterial");
+            return raw ? JSON.parse(raw) : null;
+        } catch {
+            return null;
         }
-        sessionStorage.setItem("quantity", String(quantity));
+    });
+
+    const [fileDetails] = useState<FileDetails | null>(() => {
+        try {
+            const raw = sessionStorage.getItem("localFileDetails");
+            return raw ? JSON.parse(raw) : null;
+        } catch {
+            return null;
+        }
+    });
+
+    const [quantity, setQuantity] = useState<number>(() => {
+        const raw = sessionStorage.getItem("quantity");
+        const q = raw ? Number(raw) : 1;
+        return Number.isFinite(q) ? q : 1;
+    });
+
+    useEffect(() => {
+        const stored = sessionStorage.getItem("quantity");
+        if (stored !== String(quantity)) {
+            sessionStorage.setItem("quantity", String(quantity));
+        }
     }, [quantity]);
 
+    const isQuantityValid = (q: number) => q > 0 && q <= 500;
+
     function handleRequestQuote() {
-        if(quantity > 0 && quantity <= 500){
-            router.push("/portal/quote");
+        if (!isQuantityValid(quantity)) {
+            setQuantityError(true);
+            return;
         }
-        setQuantityError(true)
+
+        setQuantityError(false);
+        router.push("/portal/quote");
     }
 
     function handleBackToMaterial() {
