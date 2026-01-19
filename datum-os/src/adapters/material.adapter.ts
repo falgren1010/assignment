@@ -41,6 +41,30 @@ export class MaterialAdapter implements IMaterialAdapter {
             return materialList
     }
 
+    async getMaterial(materialID: string):  Promise<Material>{
+        const getResult = await this.materialsDB
+            .select()
+            .from(materials)
+            .where(eq(materials.id, materialID))
+            .limit(1)
+
+        const dbMaterial = getResult[0]
+
+        if (!dbMaterial) {
+            throw(new NotFoundError("DB Error: Material Not Found"))
+        }
+
+        return {
+            id: dbMaterial.id,
+            name: dbMaterial.name,
+            code: dbMaterial.code,
+            price: Number(dbMaterial.price),
+            leadTime: dbMaterial.leadTime,
+            properties: dbMaterial.properties,
+            available: dbMaterial.available
+        }
+    }
+
     async getMaterialPrice(materialCode: string):  Promise<MaterialPrice>{
        const getResult = await this.materialsDB
                 .select()

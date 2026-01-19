@@ -200,6 +200,7 @@ export interface components {
             price: number;
             leadTime: number;
             properties: string[];
+            available: boolean;
         };
         MaterialList: {
             materials: components["schemas"]["Material"][];
@@ -232,6 +233,11 @@ export interface components {
             metadata?: {
                 [key: string]: string;
             };
+        };
+        QuoteRequest: {
+            fileId: string;
+            materialId: string;
+            quantity: number;
         };
         Quote: {
             id?: string;
@@ -568,7 +574,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["Quote"];
+                "application/json": components["schemas"]["QuoteRequest"];
             };
         };
         responses: {

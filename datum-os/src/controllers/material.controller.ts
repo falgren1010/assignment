@@ -3,6 +3,8 @@ import type {Context, Hono} from "hono";
 import type {Material} from "../services/models/models.js"
 import {renderError} from "./common.js";
 import {AppError} from "../services/models/errors.js";
+import type { components } from "./api-models/models.ts";
+export type ApiMaterialList = components["schemas"]["MaterialList"];
 
 export interface IMaterialService{
     listMaterial(): Promise<Material[]>
@@ -23,7 +25,11 @@ export class MaterialController implements RouteInitializer{
         try{
             const materials = await this.materialService.listMaterial()
 
-            return c.json(materials, 200)
+            const materialList: ApiMaterialList = {
+                materials: materials
+            }
+
+            return c.json(materialList, 200)
 
         } catch (err) {
             if(err instanceof AppError){

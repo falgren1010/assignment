@@ -15,9 +15,6 @@ export class QuotesAdapter{
 
     async createQuote(quote: Quote): Promise<Quote>{
 
-        const expireDate = new Date();
-        expireDate.setDate(expireDate.getDate() + 7);
-
         const dbObject: QuotesInsert = {
             fileId: quote.fileId,
             materialId: quote.materialId,
@@ -29,7 +26,8 @@ export class QuotesAdapter{
             quantityDiscount: String(quote.quantityDiscount),
             totalPrice: String(quote.totalPrice),
             status: quote.status,
-            expiresAt: expireDate,
+            createdAt: quote.createdAt,
+            expiresAt: quote.expiresAt,
         };
 
 
