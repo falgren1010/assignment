@@ -16,7 +16,7 @@ post:
       content:
         application/json:
           schema:
-            $ref: 'order.yml#/components/schemas/OrderID'
+            $ref: 'order.yml#/components/schemas/Order'
     "400":
       description: 400 BAD REQUEST
     "401":

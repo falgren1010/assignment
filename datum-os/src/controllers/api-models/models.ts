@@ -222,7 +222,6 @@ export interface components {
             /** Format: date-time */
             createdAt: string;
         };
-        OrderID: string;
         StripePaymentIntent: {
             id: string;
             amount: number;
@@ -437,7 +436,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["OrderID"];
+                    "application/json": components["schemas"]["Order"];
                 };
             };
             /** @description 400 BAD REQUEST */

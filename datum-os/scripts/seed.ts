@@ -83,7 +83,7 @@ export const materialsTestData: Material[] = [
         price: 0.18,
         leadTime: 7,
         properties: ["Chemical resistant", "living hinges"],
-        available: true
+        available: false
     },
     {
         name: "TPU 95A",

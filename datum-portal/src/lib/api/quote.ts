@@ -15,14 +15,10 @@ export async function requestQuote(fileDetails: FileDetails, material: Material,
         quantity: quantity,
     }
 
-    console.log(requestQuote)
-
     const res = await fetch(`${apiUrl}/api/quotes`, {
         method: "POST",
         body: JSON.stringify(requestQuote),
     });
-
-    console.log(res)
 
     if (!res.ok) {
         throw new Error(`failed requesting quote ${res.status}`);
