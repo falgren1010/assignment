@@ -94,12 +94,13 @@ export default function MaterialsPage() {
                                         ))}
                                     </ul>
                                 </div>
-                                <button
+                                {mat.available && <button
                                     className="btn btn-primary mt-6"
                                     onClick={() => handleChoose(mat.id)}
                                 >
                                     Choose Material
-                                </button>
+                                </button>}
+                                {!mat.available && <div font-bold text-xl mb-2> Material currently unavailable</div>}
                             </div>
                         ))}
                     </div>

@@ -11,7 +11,8 @@
     "test:coverage": "vitest run --coverage",
     "generate:types": "openapi-typescript ./open-api/openapi.yml -o ./src/controllers/api-models/models.ts",
     "db:generate": "drizzle-kit generate --config=./src/infrastructure/databases/postgres/drizzle.config.ts",
-    "db:push": "drizzle-kit push --config=./src/infrastructure/databases/postgres/drizzle.config.ts"
+    "db:push": "drizzle-kit push --config=./src/infrastructure/databases/postgres/drizzle.config.ts",
+    "seed": "node scripts/seed.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.9",

@@ -5,7 +5,7 @@ import {AppError} from "../services/models/errors.js";
 import {renderError} from "./common.js";
 
 export interface IOrdersService{
-    createOrder(order: Order): Promise<string>
+    createOrder(order: Order): Promise<Order>
     getOrder(id: string): Promise<Order>
     processPayment(paymentIntent: StripePaymentIntent): Promise<void>
 }

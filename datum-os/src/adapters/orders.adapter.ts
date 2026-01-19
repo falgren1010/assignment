@@ -16,7 +16,7 @@ export class OrdersAdapter implements IOrdersAdapter{
         this.ordersDB = db
     }
 
-    async createOrder(order: Order): Promise<string>{
+    async createOrder(order: Order): Promise<Order>{
         const dbObject: OrdersInsert = {
             quoteId: order.quoteId,
             customerName: order.customerName,
@@ -38,7 +38,19 @@ export class OrdersAdapter implements IOrdersAdapter{
             throw (new NotFoundError("DB Error: Order Not Found"))
         }
 
-        return dbOrder.id
+        return {
+            id: dbOrder.id,
+            quoteId: dbOrder.quoteId,
+            customerName: dbOrder.customerName,
+            customerEmail: dbOrder.customerEmail,
+            customerCompany: dbOrder.customerCompany,
+            paymentMethod: dbOrder.paymentMethod,
+            paymentStatus: dbOrder.paymentStatus,
+            purchaseOrderFileId: dbOrder.purchaseOrderFileId,
+            totalAmount: Number(dbOrder.totalAmount),
+            currency: dbOrder.currency,
+            createdAt: dbOrder.createdAt,
+        }
     }
 
     async getOrder(id: string): Promise<Order>{
