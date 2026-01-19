@@ -100,7 +100,10 @@ export default function MaterialsPage() {
                                 >
                                     Choose Material
                                 </button>}
-                                {!mat.available && <div font-bold text-xl mb-2> Material currently unavailable</div>}
+                                {!mat.available && (
+                                    <div className="mt-6 w-full text-center text-lg font-semibold">
+                                        Material currently unavailable
+                                    </div> )}
                             </div>
                         ))}
                     </div>
