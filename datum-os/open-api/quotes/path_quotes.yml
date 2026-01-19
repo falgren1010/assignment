@@ -9,7 +9,7 @@ post:
     content:
       application/json:
         schema:
-          $ref: 'quote.yml#/components/schemas/Quote'
+          $ref: 'quote.yml#/components/schemas/QuoteRequest'
   responses:
     "201":
       description: 201 CREATED

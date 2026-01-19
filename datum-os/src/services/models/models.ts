@@ -48,6 +48,12 @@ export interface Quote {
     expiresAt: Date;
 }
 
+export interface QuoteRequest {
+    fileID: string;
+    materialID: string;
+    quantity: number;
+}
+
 export interface Order {
     id?: string;
     quoteId: string;
@@ -95,4 +101,10 @@ export interface StripePaymentIntent {
     client_secret?: string;
     payment_method?: string | null;
     metadata?: Record<string, string>;
+}
+
+export interface Discount {
+    min: number;
+    max?: number;
+    discountPercent: number;
 }

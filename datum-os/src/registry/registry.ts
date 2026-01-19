@@ -12,8 +12,10 @@ import {MaterialAdapter} from "../adapters/material.adapter.js";
 import {OrdersAdapter} from "../adapters/orders.adapter.js";
 import {QuotesAdapter} from "../adapters/quotes.adapter.js";
 import {Hono} from "hono";
+import { cors } from "hono/cors";
 import {MockGeometryService} from "../mockGeometryService/mock-geometry-service.js";
 import {GeometryServiceAdapter} from "../adapters/geometry-service.adapter.js";
+import "dotenv/config";
 
 export interface RouteInitializer{
     initRoutes(router: Hono): void
@@ -59,7 +61,7 @@ export class Registry {
         this.filesService = new FilesService(this.filesAdapter, this.geometryServiceAdapter)
         this.materialService = new MaterialService(this.materialAdapter)
         this.ordersService = new OrdersService(this.ordersAdapter)
-        this.quotesService = new QuotesService(this.quotesAdapter)
+        this.quotesService = new QuotesService(this.quotesAdapter, this.filesAdapter, this.materialAdapter)
 
         this.filesController = new FilesController(this.filesService)
         this.materialController = new MaterialController(this.materialService)
@@ -72,6 +74,11 @@ export class Registry {
     }
 
     public initRoutes(){
+        this.router.use("*", cors({
+            origin: process.env.FRONTEND_URL!,
+            allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            allowHeaders: ["Content-Type"], }))
+
         const controllers: RouteInitializer[] = [
             this.filesController,
             this.materialController,

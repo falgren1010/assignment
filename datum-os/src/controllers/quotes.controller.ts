@@ -1,11 +1,13 @@
 import type {RouteInitializer} from "../registry/registry.js";
 import type {Context, Hono} from "hono";
-import type {Quote} from "../services/models/models.js";
+import type {Quote, QuoteRequest} from "../services/models/models.js";
 import {renderError} from "./common.js";
 import {AppError} from "../services/models/errors.js";
+import type { components } from "./api-models/models.ts";
+export type ApiQuoteRequest = components["schemas"]["QuoteRequest"];
 
 export interface IQuotesService{
-    createQuote(quote: Quote): Promise<Quote>
+    createQuote(quoteRequest: QuoteRequest): Promise<Quote>
     getQuote(id: string): Promise<Quote>
 }
 
@@ -23,8 +25,14 @@ export class QuotesController implements RouteInitializer {
 
     private createQuote = async (c: Context) => {
         try {
-            const quotePayload = await c.req.json<Quote>()
-            const quote = await this.quotesService.createQuote(quotePayload)
+            const quotePayload = await c.req.json<ApiQuoteRequest>()
+
+            const quoteRequest: QuoteRequest = {
+                fileID: quotePayload.fileId,
+                materialID: quotePayload.materialId,
+                quantity: quotePayload.quantity
+            }
+            const quote = await this.quotesService.createQuote(quoteRequest)
 
             return c.json(quote, 200)
 
