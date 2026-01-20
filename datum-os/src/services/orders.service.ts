@@ -1,5 +1,7 @@
 import type {IOrdersService} from "../controllers/orders.controller.js";
 import type {Order, StripePaymentIntent} from "./models/models.js";
+import {validate} from "uuid";
+import {ValidationError} from "./models/errors.js";
 
 export interface IOrdersAdapter{
     createOrder(order: Order): Promise<Order>
@@ -15,16 +17,22 @@ export class OrdersService implements IOrdersService{
     }
 
      async createOrder(order: Order): Promise<Order> {
+         // todo validate object
+
          return await this.ordersAdapter.createOrder(order)
     }
 
      async getOrder(id: string):  Promise<Order> {
-         //todo validation of ids -> regex
+         if(validate(id)){
+             throw(new ValidationError("Invalid ID"))
+         }
 
         return await this.ordersAdapter.getOrder(id)
     }
 
     async processPayment(paymentIntent: StripePaymentIntent):  Promise<void> {
+        // todo validate object
+
          return await this.ordersAdapter.processPayment(paymentIntent)
     }
 
