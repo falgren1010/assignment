@@ -5,7 +5,7 @@ the OS and Portal would ofcourse be split in separate Repos.
 
 ## Prerequities
     
-- Docker / Docker Desktop installed 
+- Docker / Docker Desktop installed and running
 - Terminal with cursor in project root folder "assignment"
 
 ### Backend datum-os setup
