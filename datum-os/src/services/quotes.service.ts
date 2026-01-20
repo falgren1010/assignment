@@ -2,6 +2,8 @@ import type {IQuotesService} from "../controllers/quotes.controller.js";
 import type {Discount, FileDetails, Material, Quote, QuoteRequest} from "./models/models.js";
 import type {IFilesAdapter} from "./files.service.js";
 import type {IMaterialAdapter} from "./material.service.js";
+import {validate} from "uuid";
+import {ValidationError} from "./models/errors.js";
 
 export interface IQuotesAdapter{
     createQuote(quote: Quote): Promise<Quote>
@@ -20,7 +22,7 @@ export class QuotesService implements IQuotesService{
     }
 
     async createQuote(quoteRequest: QuoteRequest): Promise<Quote> {
-        // todo validation of ids -> regex
+       // todo validate object
 
         const fileDetails = await this.filesAdapter.getFileDetails(quoteRequest.fileID)
         const material = await this.materialAdapter.getMaterial(quoteRequest.materialID)
@@ -31,7 +33,9 @@ export class QuotesService implements IQuotesService{
     }
 
     async getQuote(id: string): Promise<Quote> {
-        // todo validation of ids -> regex
+        if(validate(id)){
+            throw(new ValidationError("Invalid ID"))
+        }
 
         return await this.quotesAdapter.getQuote(id)
     }
@@ -40,6 +44,11 @@ export class QuotesService implements IQuotesService{
     // Helper Functions ---------------------------------------------------------------------------
 
     private createInitialQuote(fileDetails: FileDetails, material: Material, quantity: number ): Quote {
+
+        if (quantity < 1){
+            throw (new ValidationError("Quantity cant be < 1"))
+        }
+
         const expiresDate = new Date();
         expiresDate.setDate(expiresDate.getDate() + 7);
 
@@ -48,7 +57,7 @@ export class QuotesService implements IQuotesService{
         const unitPrice = fileDetails.geometry!.volumeCm3 * material.price
         const subtotal = unitPrice * quantity
         const quantityDiscount = subtotal - subtotal * (1 - discountPercent / 100)
-        const totalPrice = subtotal - quantity
+        const totalPrice = subtotal - quantityDiscount
 
         return {
             fileId: fileDetails.id!,
@@ -69,8 +78,12 @@ export class QuotesService implements IQuotesService{
 
     private calculateDiscount(quantity: number): number{
 
-        // should be stored in DB and data-driven for CRUD too in case this needs to be changed
-        // just hardcoded for time-saving purposes
+        if (quantity < 1){
+            throw (new ValidationError("Quantity cant be < 1"))
+        }
+
+        // should be stored in DB and data-driven for CRUD, in case this needs to be changed
+        // just hardcoded for assignment
         const discounts: Discount[] = [
             { min: 1, max: 4, discountPercent: 0 },
             { min: 5, max: 9, discountPercent: 5 },

@@ -2,6 +2,7 @@ import type {IFilesService} from "../controllers/files.controller.js";
 import type {Result} from "./models/common.models.js";
 import type {FileDetails, GeometryProperties, GeometryResult} from "./models/models.js";
 import {ValidationError} from "./models/errors.js";
+import { validate } from "uuid";
 
 export interface IFilesAdapter{
     uploadFileToDatabase(file: File): Promise<string>
@@ -42,7 +43,10 @@ export class FilesService implements IFilesService{
     }
 
     async getFileDetails(id: string): Promise<FileDetails> {
-        // todo id validation
+        if(validate(id)){
+            throw(new ValidationError("Invalid ID"))
+        }
+
         return await this.filesAdapter.getFileDetails(id)
     }
 
