@@ -23,6 +23,10 @@ export class FilesController implements RouteInitializer {
 
     private uploadFile = async (c: Context) => {
         try {
+            c.header("Access-Control-Allow-Origin", process.env.FRONTEND_URL!)
+            c.header("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS")
+            c.header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
             const form = await c.req.parseBody()
             const file = form["file"] as File
 
